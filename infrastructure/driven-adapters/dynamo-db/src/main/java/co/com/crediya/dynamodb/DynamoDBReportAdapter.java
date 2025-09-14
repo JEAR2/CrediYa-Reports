@@ -2,7 +2,7 @@ package co.com.crediya.dynamodb;
 
 import co.com.crediya.dynamodb.helper.TemplateAdapterOperations;
 import co.com.crediya.model.report.Report;
-import co.com.crediya.model.report.exceptions.RequestBadRequestException;
+import co.com.crediya.model.report.exceptions.ReportBadReportException;
 import co.com.crediya.model.report.exceptions.enums.ExceptionMessages;
 import co.com.crediya.model.report.gateways.ReportRepository;
 import org.reactivecommons.utils.ObjectMapper;
@@ -11,12 +11,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import software.amazon.awssdk.enhanced.dynamodb.*;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
-import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Repository
@@ -36,7 +32,6 @@ public class DynamoDBReportAdapter extends TemplateAdapterOperations<Report, Str
 
     @Override
     public Flux<Report> getReportsBetween(LocalDateTime from, LocalDateTime to) {
-        // Query por la partition key y rango de sort key
         return Flux.from(table.query(r ->
                         r.queryConditional(QueryConditional.keyEqualTo(k -> k.partitionValue("REPORT#APPROVED")))
                 ).items())
@@ -60,7 +55,7 @@ public class DynamoDBReportAdapter extends TemplateAdapterOperations<Report, Str
                     .thenReturn(report)
                     .onErrorResume(
                             software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException.class,
-                            e -> Mono.error(new RequestBadRequestException(ExceptionMessages.REQUEST_ALREADY_APPROVED.getMessage())));
+                            e -> Mono.error(new ReportBadReportException(ExceptionMessages.REQUEST_ALREADY_APPROVED.getMessage())));
     }
 
 

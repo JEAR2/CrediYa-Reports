@@ -36,3 +36,7 @@ management:
         enabled: true
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8080"
+security:
+  jwt:
+    expiration: 3600000
+    public-key-location: "file:${JWT_PUBLIC_KEY}"
