@@ -1,0 +1,38 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: "Microservice-reports"
+  devtools:
+    add-properties: false
+  h2:
+    console:
+      enabled: true
+      path: "/h2"
+  profiles:
+    include: null
+aws:
+  region: "us-east-2"
+  dynamodb:
+    endpoint: "${ENDPOINT_DYNAMO}"
+    accessKey: "${AWS_ACCESS_KEY_ID}"
+    secretKey: "${AWS_SECRET_ACCESS_KEY}"
+entrypoint:
+  sqs:
+    region: "us-east-2"
+    queueUrl: "${AWS_URL_SQS_APPROVED}"
+    waitTimeSeconds: 20
+    maxNumberOfMessages: 10
+    visibilityTimeoutSeconds: 10
+    numberOfThreads: 1
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
