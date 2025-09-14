@@ -32,7 +32,6 @@ public class DynamoDBReportAdapter extends TemplateAdapterOperations<Report, Str
 
     @Override
     public Flux<Report> getReportsBetween(LocalDateTime from, LocalDateTime to) {
-        // Query por la partition key y rango de sort key
         return Flux.from(table.query(r ->
                         r.queryConditional(QueryConditional.keyEqualTo(k -> k.partitionValue("REPORT#APPROVED")))
                 ).items())
