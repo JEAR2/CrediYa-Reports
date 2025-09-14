@@ -1,5 +1,7 @@
 package co.com.crediya.api;
 
+import co.com.crediya.api.util.HandlersResponseUtil;
+import co.com.crediya.model.report.exceptions.enums.ExceptionStatusCode;
 import co.com.crediya.model.report.models.ReportResponse;
 import co.com.crediya.usecase.report.ReportUseCase;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +35,21 @@ public class Handler {
                 .orElse(LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault()));
 
         return useCase.getReportsAndTotal(from, to)
-                .flatMap(response -> ServerResponse.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(response))
-                .switchIfEmpty(ServerResponse.ok()
-                        .bodyValue(new ReportResponse(BigDecimal.ZERO, 0L,List.of())));
+                .flatMap(response ->
+                        ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(HandlersResponseUtil.buildBodySuccessResponse(
+                                        ExceptionStatusCode.OK.status(),
+                                        response
+                                ))
+                )
+                .switchIfEmpty(
+                        ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(HandlersResponseUtil.buildBodySuccessResponse(
+                                        ExceptionStatusCode.OK.status(),
+                                        new ReportResponse(BigDecimal.ZERO, 0L, List.of())
+                                ))
+                );
     }
 }

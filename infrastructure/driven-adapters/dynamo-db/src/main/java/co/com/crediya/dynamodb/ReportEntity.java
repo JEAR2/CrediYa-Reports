@@ -2,7 +2,6 @@ package co.com.crediya.dynamodb;
 
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.*;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 /* Enhanced DynamoDB annotations are incompatible with Lombok #1932
@@ -10,9 +9,7 @@ import java.time.LocalDateTime;
 @DynamoDbBean
 public class ReportEntity {
     private String pk;
-    private String sk;
-    private String eventId;
-    //private String requestId;
+    private String requestId;
     private String amount;
     private LocalDateTime createdAt;
 
@@ -23,26 +20,8 @@ public class ReportEntity {
 
     @DynamoDbSortKey
     @DynamoDbAttribute("sk")
-    public String getSk() { return sk; }
-    public void setSk(String sk) { this.sk = sk; }
-
-    @DynamoDbAttribute("eventId")
-    public String getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(String eventId) {
-        this.eventId = eventId;
-    }
-
-    /*@DynamoDbAttribute("requestId")
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }*/
+    public String getRequestId() { return requestId; }
+    public void setRequestId(String requestId) { this.requestId = requestId; }
 
     @DynamoDbAttribute("amount")
     public String getAmount() {

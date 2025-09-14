@@ -28,10 +28,9 @@ public class SQSProcessor implements Function<Message, Mono<Void>> {
                 .flatMap(event -> {
                     Report report = Report.builder()
                             .pk("REPORT#" + event.state())
-                            .sk(event.requestId())
-                            .eventId(event.eventId())
+                            .requestId(event.requestId())
                             .amount(event.amount())
-                            .createdAt(event.createdAt())
+                            .createdAt(LocalDateTime.now())
                             .build();
 
                     return reportUseCase.execute(report);

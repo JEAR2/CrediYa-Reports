@@ -15,9 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Report {
-    private String pk;             // "REPORT#APPROVED"
-    private String sk;             // timestamp ISO
-    private String eventId;        // para idempotencia
+    private String pk;
+    private String requestId;
     private BigDecimal amount;
     private LocalDateTime createdAt;
 

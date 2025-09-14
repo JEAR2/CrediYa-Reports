@@ -4,10 +4,10 @@ import co.com.crediya.model.report.exceptions.enums.ExceptionStatusCode;
 import lombok.Getter;
 
 @Getter
-public class RequestException extends RuntimeException{
+public class ReportException extends RuntimeException{
     private final ExceptionStatusCode statusCode;
     private final int status;
-    public RequestException(ExceptionStatusCode statusCode, String message, int status){
+    public ReportException(ExceptionStatusCode statusCode, String message, int status){
         super(message);
         this.statusCode = statusCode;
         this.status = status;
