@@ -4,6 +4,12 @@ import co.com.crediya.api.util.HandlersResponseUtil;
 import co.com.crediya.model.report.exceptions.enums.ExceptionStatusCode;
 import co.com.crediya.model.report.models.ReportResponse;
 import co.com.crediya.usecase.report.ReportUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -22,6 +28,13 @@ import java.util.List;
 public class Handler {
     private final ReportUseCase useCase;
 
+    @Operation( tags = "Reports", operationId = "getReports", description = "Reports list", summary = "Reports list",
+            responses = { @ApiResponse( responseCode = "201", description = "Report get successfully.", content = @Content( schema = @Schema( implementation = ReportResponse.class ) ) )
+
+            },
+            parameters = {
+                    @Parameter( in = ParameterIn.HEADER, name = "Authorization", description = "Bearer token", required = true, example = "mkasjdlkjas782347812" )
+            })
     public Mono<ServerResponse> getReports(ServerRequest request) {
 
         LocalDateTime from = request.queryParam("from")

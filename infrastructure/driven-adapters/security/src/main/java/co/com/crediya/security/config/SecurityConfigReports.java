@@ -35,6 +35,13 @@ public class SecurityConfigReports {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(ex -> ex
+                        .pathMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/webjars/**",
+                                "/openapi/**"
+                        ).permitAll()
                         .pathMatchers(HttpMethod.GET, "/api/v1/reports").hasRole("ADMIN")
                         .anyExchange().authenticated()
                 )
