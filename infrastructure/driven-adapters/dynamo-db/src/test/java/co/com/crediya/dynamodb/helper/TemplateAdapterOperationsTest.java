@@ -1,23 +1,12 @@
 package co.com.crediya.dynamodb.helper;
 
-import co.com.crediya.dynamodb.DynamoDBReportAdapter;
-import co.com.crediya.dynamodb.ReportEntity;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import co.com.crediya.dynamodb.report.ReportEntity;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.reactivecommons.utils.ObjectMapper;
-import reactor.test.StepVerifier;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
-import software.amazon.awssdk.enhanced.dynamodb.Key;
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
-
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.when;
 
 class TemplateAdapterOperationsTest {
 
@@ -36,17 +25,17 @@ class TemplateAdapterOperationsTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        when(dynamoDbEnhancedAsyncClient.table("table_name", TableSchema.fromBean(ReportEntity.class)))
+        when(dynamoDbEnhancedAsyncClient.table("table_name", TableSchema.fromBean(ApprovedRequestEntity.class)))
                 .thenReturn(customerTable);
 
-        reportEntity = new ReportEntity();
+        reportEntity = new ApprovedRequestEntity();
         reportEntity.setId("id");
         reportEntity.setAtr1("atr1");
     }
 
     @Test
     void modelEntityPropertiesMustNotBeNull() {
-        ReportEntity reportEntityUnderTest = new ReportEntity("id", "atr1");
+        ApprovedRequestEntity reportEntityUnderTest = new ApprovedRequestEntity("id", "atr1");
 
         assertNotNull(reportEntityUnderTest.getId());
         assertNotNull(reportEntityUnderTest.getAtr1());
@@ -55,10 +44,10 @@ class TemplateAdapterOperationsTest {
     @Test
     void testSave() {
         when(customerTable.putItem(reportEntity)).thenReturn(CompletableFuture.runAsync(()->{}));
-        when(mapper.map(reportEntity, ReportEntity.class)).thenReturn(reportEntity);
+        when(mapper.map(reportEntity, ApprovedRequestEntity.class)).thenReturn(reportEntity);
 
-        DynamoDBReportAdapter dynamoDBReportAdapter =
-                new DynamoDBReportAdapter(dynamoDbEnhancedAsyncClient, mapper);
+        DynamoDBApprovedRequestAdapter dynamoDBReportAdapter =
+                new DynamoDBApprovedRequestAdapter(dynamoDbEnhancedAsyncClient, mapper);
 
         StepVerifier.create(dynamoDBReportAdapter.save(reportEntity))
                 .expectNextCount(1)
@@ -74,8 +63,8 @@ class TemplateAdapterOperationsTest {
                 .thenReturn(CompletableFuture.completedFuture(reportEntity));
         when(mapper.map(reportEntity, Object.class)).thenReturn("value");
 
-        DynamoDBReportAdapter dynamoDBReportAdapter =
-                new DynamoDBReportAdapter(dynamoDbEnhancedAsyncClient, mapper);
+        DynamoDBApprovedRequestAdapter dynamoDBReportAdapter =
+                new DynamoDBApprovedRequestAdapter(dynamoDbEnhancedAsyncClient, mapper);
 
         StepVerifier.create(dynamoDBReportAdapter.getById("id"))
                 .expectNext("value")
@@ -84,14 +73,14 @@ class TemplateAdapterOperationsTest {
 
     @Test
     void testDelete() {
-        when(mapper.map(reportEntity, ReportEntity.class)).thenReturn(reportEntity);
+        when(mapper.map(reportEntity, ApprovedRequestEntity.class)).thenReturn(reportEntity);
         when(mapper.map(reportEntity, Object.class)).thenReturn("value");
 
         when(customerTable.deleteItem(reportEntity))
                 .thenReturn(CompletableFuture.completedFuture(reportEntity));
 
-        DynamoDBReportAdapter dynamoDBReportAdapter =
-                new DynamoDBReportAdapter(dynamoDbEnhancedAsyncClient, mapper);
+        DynamoDBApprovedRequestAdapter dynamoDBReportAdapter =
+                new DynamoDBApprovedRequestAdapter(dynamoDbEnhancedAsyncClient, mapper);
 
         StepVerifier.create(dynamoDBReportAdapter.delete(reportEntity))
                 .expectNext("value")

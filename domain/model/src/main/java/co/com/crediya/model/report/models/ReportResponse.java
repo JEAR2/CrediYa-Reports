@@ -1,6 +1,6 @@
 package co.com.crediya.model.report.models;
 
-import co.com.crediya.model.report.Report;
+import co.com.crediya.model.report.report.Report;
 import lombok.*;
 
 import java.math.BigDecimal;

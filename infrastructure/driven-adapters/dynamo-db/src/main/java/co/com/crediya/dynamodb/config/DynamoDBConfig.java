@@ -1,14 +1,11 @@
 package co.com.crediya.dynamodb.config;
 
-import co.com.crediya.dynamodb.ReportEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbAsyncTable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedAsyncClient;
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 
@@ -36,8 +33,5 @@ public class DynamoDBConfig {
                 .dynamoDbClient(client)
                 .build();
     }
-    @Bean
-    public DynamoDbAsyncTable<ReportEntity> reportTable(DynamoDbEnhancedAsyncClient client) {
-        return client.table("reports", TableSchema.fromBean(ReportEntity.class));
-    }
+
 }

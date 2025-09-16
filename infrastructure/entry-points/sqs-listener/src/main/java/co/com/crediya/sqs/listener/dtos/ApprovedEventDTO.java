@@ -1,11 +1,10 @@
 package co.com.crediya.sqs.listener.dtos;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public record ApprovedEventDTO(
-                               String requestId,
-                               BigDecimal amount,
-                               String state,
-                               LocalDateTime createdAt) {
+        String requestId,
+        BigDecimal amount,
+        Instant approvedAt) {
 }

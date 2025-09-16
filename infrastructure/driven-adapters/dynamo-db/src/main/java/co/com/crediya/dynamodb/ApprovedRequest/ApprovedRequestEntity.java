@@ -1,13 +1,14 @@
-package co.com.crediya.dynamodb;
+package co.com.crediya.dynamodb.ApprovedRequest;
 
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.*;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 import java.time.LocalDateTime;
 
-/* Enhanced DynamoDB annotations are incompatible with Lombok #1932
-         https://github.com/aws/aws-sdk-java-v2/issues/1932*/
 @DynamoDbBean
-public class ReportEntity {
+public class ApprovedRequestEntity {
     private String pk;
     private String requestId;
     private String amount;
@@ -32,7 +33,7 @@ public class ReportEntity {
         this.amount = amount;
     }
 
-    @DynamoDbAttribute("createAt")
+    @DynamoDbAttribute("createdAt")
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }

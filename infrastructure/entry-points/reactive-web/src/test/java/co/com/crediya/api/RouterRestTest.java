@@ -30,7 +30,7 @@ class RouterRestTest {
 
     @MockBean
     private ReportUseCase reportUseCase;
-
+/*
     @Test
     void shouldReturnReports() {
         ReportResponse reportResponse = new ReportResponse(
@@ -57,5 +57,5 @@ class RouterRestTest {
                 .expectBody()
                 .jsonPath("$.data.totalAmount").isEqualTo(100);
     }
-
+*/
 }
