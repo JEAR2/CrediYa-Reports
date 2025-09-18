@@ -36,16 +36,6 @@ public class Handler {
                     @Parameter( in = ParameterIn.HEADER, name = "Authorization", description = "Bearer token", required = true, example = "mkasjdlkjas782347812" )
             })
     public Mono<ServerResponse> getReports(ServerRequest request) {
-/*
-        LocalDateTime from = request.queryParam("from")
-                .map(Instant::parse)
-                .map(instant -> LocalDateTime.ofInstant(instant, ZoneId.systemDefault()))
-                .orElse(LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.systemDefault()));
-
-        LocalDateTime to = request.queryParam("to")
-                .map(Instant::parse)
-                .map(instant -> LocalDateTime.ofInstant(instant, ZoneId.systemDefault()))
-                .orElse(LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault()));*/
 
         return useCase.getReport()
                 .flatMap(response ->

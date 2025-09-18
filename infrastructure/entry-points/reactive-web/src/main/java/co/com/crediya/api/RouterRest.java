@@ -17,9 +17,9 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class RouterRest {
     @Bean
     @RouterOperations({
-            @RouterOperation(path = "/api/v1/reports", produces = {MediaType.APPLICATION_JSON_VALUE,}, method = RequestMethod.GET, beanClass = Handler.class, beanMethod = "getReports")
+            @RouterOperation(path = "/report/api/v1/reports", produces = {MediaType.APPLICATION_JSON_VALUE,}, method = RequestMethod.GET, beanClass = Handler.class, beanMethod = "getReports")
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(GET("/api/v1/reports"), handler::getReports);
+        return route(GET("/report/api/v1/reports"), handler::getReports);
     }
 }

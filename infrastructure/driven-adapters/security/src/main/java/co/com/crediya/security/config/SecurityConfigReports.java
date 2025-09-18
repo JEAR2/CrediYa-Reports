@@ -36,13 +36,14 @@ public class SecurityConfigReports {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(ex -> ex
                         .pathMatchers(
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/webjars/**",
-                                "/openapi/**"
+                                "/report/swagger-ui.html",
+                                "/report/swagger-ui/**",
+                                "/report/v3/api-docs/**",
+                                "/report/webjars/**",
+                                "/report/openapi/**"
                         ).permitAll()
-                        .pathMatchers(HttpMethod.GET, "/api/v1/reports").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.GET, "/report/actuator/health").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/report/api/v1/reports").hasRole("ADMIN")
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->
