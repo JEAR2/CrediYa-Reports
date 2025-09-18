@@ -6,13 +6,13 @@ import co.com.crediya.usecase.report.ReportUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import software.amazon.awssdk.services.sqs.model.Message;
 
 import java.util.function.Function;
 
-@Service
+@Component("approvedProcessor")
 @Slf4j
 @RequiredArgsConstructor
 public class SQSProcessor implements Function<Message, Mono<Void>> {

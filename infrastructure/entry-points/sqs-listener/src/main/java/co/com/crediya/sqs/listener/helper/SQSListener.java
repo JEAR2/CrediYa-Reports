@@ -1,6 +1,6 @@
 package co.com.crediya.sqs.listener.helper;
 
-import co.com.crediya.sqs.listener.config.SQSProperties;
+import co.com.crediya.sqs.listener.config.BaseSQSProperties;
 import lombok.Builder;
 import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
@@ -19,7 +19,7 @@ import java.util.function.Function;
 @Builder
 public class SQSListener {
     private final SqsAsyncClient client;
-    private final SQSProperties properties;
+    private final BaseSQSProperties properties;
     private final Function<Message, Mono<Void>> processor;
     private String operation;
 

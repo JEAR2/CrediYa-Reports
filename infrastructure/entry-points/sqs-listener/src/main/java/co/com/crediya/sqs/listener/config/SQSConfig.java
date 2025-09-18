@@ -1,6 +1,7 @@
 package co.com.crediya.sqs.listener.config;
 
 import co.com.crediya.sqs.listener.helper.SQSListener;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Mono;
@@ -18,22 +19,48 @@ import software.amazon.awssdk.services.sqs.model.Message;
 
 import java.net.URI;
 import java.util.function.Function;
-
 @Configuration
 public class SQSConfig {
-
     @Bean
-    public SQSListener sqsListener(SqsAsyncClient client, SQSProperties properties, Function<Message, Mono<Void>> fn) {
+    public SQSListener approvedSqsListener(
+            @Qualifier("approvedSqsClient") SqsAsyncClient approvedClient,
+            ApprovedSQSProperties approvedProperties,
+            @Qualifier("approvedProcessor") Function<Message, Mono<Void>> approvedFn) {
         return SQSListener.builder()
-                .client(client)
-                .properties(properties)
-                .processor(fn)
+                .client(approvedClient)
+                .properties(approvedProperties)
+                .processor(approvedFn)
                 .build()
                 .start();
     }
 
     @Bean
-    public SqsAsyncClient configSqs(SQSProperties properties, MetricPublisher publisher) {
+    public SQSListener dailyReportSqsListener(
+            @Qualifier("dailySqsClient") SqsAsyncClient dailyClient,
+            ReportSQSProperties dailyProperties,
+            @Qualifier("dailyReportProcessor") Function<Message, Mono<Void>> dailyFn) {
+        return SQSListener.builder()
+                .client(dailyClient)
+                .properties(dailyProperties)
+                .processor(dailyFn)
+                .build()
+                .start();
+    }
+
+
+    // client para approved
+    @Bean
+    public SqsAsyncClient approvedSqsClient(ApprovedSQSProperties properties, MetricPublisher publisher) {
+        return buildClient(properties, publisher);
+    }
+
+    // client para daily
+    @Bean
+    public SqsAsyncClient dailySqsClient(ReportSQSProperties properties, MetricPublisher publisher) {
+        return buildClient(properties, publisher);
+    }
+
+    private SqsAsyncClient buildClient(BaseSQSProperties properties, MetricPublisher publisher) {
         return SqsAsyncClient.builder()
                 .endpointOverride(resolveEndpoint(properties))
                 .region(Region.of(properties.region()))
@@ -53,11 +80,7 @@ public class SQSConfig {
                 .build();
     }
 
-    protected URI resolveEndpoint(SQSProperties properties) {
-        if (properties.endpoint() != null) {
-            return URI.create(properties.endpoint());
-        }
-        return null;
+    protected URI resolveEndpoint(BaseSQSProperties properties) {
+        return properties.endpoint() != null ? URI.create(properties.endpoint()) : null;
     }
-
 }
