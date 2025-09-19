@@ -47,3 +47,7 @@ security:
   jwt:
     expiration: 3600000
     public-key-location: "${JWT_PUBLIC_KEY}"
+ses:
+  email:
+    admin: "${EMAIL_ADMIN}"
+    ses: "${EMAIL_SES}"

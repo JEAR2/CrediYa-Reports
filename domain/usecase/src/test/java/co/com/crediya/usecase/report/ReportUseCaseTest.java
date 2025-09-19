@@ -1,8 +1,11 @@
 package co.com.crediya.usecase.report;
 
+import co.com.crediya.model.report.approvedRequest.ApprovedRequest;
+import co.com.crediya.model.report.approvedRequest.gateway.ApprovedRequestRepository;
 import co.com.crediya.model.report.report.Report;
 import co.com.crediya.model.report.report.gateway.ReportRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,68 +17,103 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
 class ReportUseCaseTest {
-/*
+
     @Mock
     private ReportRepository reportRepository;
+
+    @Mock
+    private ApprovedRequestRepository approvedRequestRepository;
+
 
     @InjectMocks
     private ReportUseCase reportUseCase;
 
+
+    private ApprovedRequest mockApprovedRequest;
+    private Report mockInitialReport;
+
+    @BeforeEach
+    void setUp() {
+        mockApprovedRequest = new ApprovedRequest("pk","requestId123",BigDecimal.TEN, Instant.now());
+        mockInitialReport = new Report("pk",10L, BigDecimal.valueOf(10.0));
+    }
+
     @Test
-    void execute_ShouldReturnSavedReport() {
-        Report report = Report.builder()
-                .pk("pk1")
-                .requestId("1")
-                .amount(BigDecimal.valueOf(100))
-                .createdAt(LocalDateTime.now())
-                .build();
+    void findReport_ShouldReturnReport() {
 
-        Mockito.when(reportRepository.saveIfNotExists(report))
-                .thenReturn(Mono.just(report));
 
-        StepVerifier.create(reportUseCase.execute(report))
-                .expectNext(report)
+        Mockito.when(reportRepository.findReport())
+                .thenReturn(Mono.just(mockInitialReport));
+
+        StepVerifier.create(reportUseCase. getReport())
+                .expectNext(mockInitialReport)
                 .verifyComplete();
 
-        Mockito.verify(reportRepository).saveIfNotExists(report);
+        verify(reportRepository).findReport();
 
     }
 
     @Test
-    void getReportsAndTotal_ShouldCalculateTotalAmountAndCount() {
-        LocalDateTime from = LocalDateTime.now().minusDays(1);
-        LocalDateTime to = LocalDateTime.now();
+    void execute_ShouldReturnSavedReport(){
 
-        Report report1 = Report.builder()
-                .pk("pk1")
-                .requestId("1")
-                .amount(BigDecimal.valueOf(100))
-                .createdAt(LocalDateTime.now())
-                .build();
 
-        Report report2 = Report.builder()
-                .pk("pk2")
-                .requestId("2")
-                .amount(BigDecimal.valueOf(200))
-                .createdAt(LocalDateTime.now())
-                .build();
+        // Arrange
+        Mockito.when(approvedRequestRepository.existsByRequestId(mockApprovedRequest.getRequestId()))
+                .thenReturn(Mono.just(false));
+        Mockito.when(approvedRequestRepository.saveApprovedRequest(mockApprovedRequest))
+                .thenReturn(Mono.just(mockApprovedRequest));
+        Mockito.when(reportRepository.findReport())
+                .thenReturn(Mono.just(mockInitialReport));
+        Mockito.when(reportRepository.saveReport(any(Report.class)))
+                .thenReturn(Mono.just(mockInitialReport));
 
-        Mockito.when(reportRepository.getReportsBetween(from, to))
-                .thenReturn(Flux.just(report1, report2));
+        // Act
+        Mono<Void> result = reportUseCase.updateReportOnRequestApproved(mockApprovedRequest);
 
-        StepVerifier.create(reportUseCase.getReportsAndTotal(from, to))
-                .assertNext(response -> {
-                    Assertions.assertEquals(BigDecimal.valueOf(300), response.getTotalAmount());
-                    Assertions.assertEquals(2, response.getTotalCount());
-                })
+        // Assert
+        StepVerifier.create(result)
                 .verifyComplete();
 
-        Mockito.verify(reportRepository).getReportsBetween(from, to);
-    }*/
+        // Verify interactions
+        verify(approvedRequestRepository).existsByRequestId(mockApprovedRequest.getRequestId());
+        verify(approvedRequestRepository).saveApprovedRequest(mockApprovedRequest);
+        verify(reportRepository).findReport();
+        verify(reportRepository).saveReport(any(Report.class));
+    }
+
+
+
+    @Test
+    void shouldNotUpdateReportWhenRequestAlreadyExists() {
+
+
+       // Arrange
+        Mockito.when(approvedRequestRepository.existsByRequestId(mockApprovedRequest.getRequestId()))
+                .thenReturn(Mono.just(true));
+
+        // Act
+        Mono<Void> result = reportUseCase.updateReportOnRequestApproved(mockApprovedRequest);
+
+        // Assert
+        StepVerifier.create(result)
+                .verifyComplete();
+
+        // Verify interactions
+        verify(approvedRequestRepository).existsByRequestId(mockApprovedRequest.getRequestId());
+        verify(approvedRequestRepository, never()).saveApprovedRequest(any(ApprovedRequest.class));
+        verify(reportRepository, never()).findReport();
+        verify(reportRepository, never()).saveReport(any(Report.class));
+    }
+
 
 }
